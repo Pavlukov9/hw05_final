@@ -204,12 +204,13 @@ class PostTests(TestCase):
 
     def test_cahce_index(self):
         """Проверка работы кеша."""
-        Post.objects.create(
+        post = Post.objects.create(
             text='Текст для кэша',
             author=self.author)
 
         response = self.authorized_client.get(self.INDEX_URL)
         posts = response.content
+        post.delete()
 
         response_old = self.authorized_client.get(self.INDEX_URL)
         old_posts = response_old.content
@@ -220,4 +221,4 @@ class PostTests(TestCase):
         response_new = self.authorized_client.get(self.INDEX_URL)
         new_posts = response_new.content
 
-        self.assertEqual(old_posts, new_posts)
+        self.assertNotEqual(posts, new_posts)
