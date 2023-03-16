@@ -24,6 +24,11 @@ class PostURLTests(TestCase):
             text='Текстовый пост',
         )
 
+        cls.url_names_templates = {
+            '/about/author/': 'about/author.html',
+            '/about/tech/': 'about/tech.html',
+        }
+
     def setUp(self):
         self.guest_client = Client()
         self.authorized_client = Client()
@@ -32,11 +37,7 @@ class PostURLTests(TestCase):
     def test_url_available_to_all_users(self):
         """Страницы доступные любому пользователю."""
 
-        url_names = {
-            '/about/author/',
-            '/about/tech/',
-        }
-        for address in url_names:
+        for address in self.url_names_templates.keys():
             with self.subTest(address=address):
                 response = self.guest_client.get(address)
                 self.assertEqual(response.status_code, 200)
@@ -44,11 +45,7 @@ class PostURLTests(TestCase):
     def test_url_templates(self):
         """Проверяем правильность вызванных шаблонов"""
 
-        url_names_templates = {
-            '/about/author/': 'about/author.html',
-            '/about/tech/': 'about/tech.html',
-        }
-        for address, template in url_names_templates.items():
+        for address, template in self.url_names_templates.items():
             with self.subTest(address=address):
                 response = self.authorized_client.get(address)
                 self.assertTemplateUsed(response, template)

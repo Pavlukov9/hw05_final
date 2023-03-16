@@ -28,6 +28,12 @@ class FollowTests(TestCase):
             group=cls.group,
         )
 
+        cls.reverse_follow_index = (
+            reverse('posts:follow_index'))
+
+        cls.profile_follow = 'posts:profile_follow'
+        cls.profile_unfollow = 'posts:profile_unfollow'
+
     def setUp(self):
         self.guest_client = Client()
         self.user1 = User.objects.create(username=self.username_one)
@@ -43,7 +49,7 @@ class FollowTests(TestCase):
         может подписываться на других пользователей
         """
         self.authorized_client.post(
-            reverse('posts:profile_follow', kwargs={
+            reverse(self.profile_follow, kwargs={
                     'username': self.user})
         )
 
@@ -58,7 +64,7 @@ class FollowTests(TestCase):
         может удалять из подписок других пользователей
         """
         self.authorized_client.post(
-            reverse('posts:profile_unfollow', kwargs={
+            reverse(self.profile_unfollow, kwargs={
                     'username': self.user})
         )
 
@@ -73,12 +79,12 @@ class FollowTests(TestCase):
         кто на него подписан и не появляется в ленте тех,
         кто не подписан."""
         self.authorized_client.post(
-            reverse('posts:profile_follow', kwargs={
+            reverse(self.profile_follow, kwargs={
                     'username': self.username}),
         )
 
         self.authorized_client2.post(
-            reverse('posts:profile_follow', kwargs={
+            reverse(self.profile_follow, kwargs={
                     'username': self.username_one}),
         )
 
@@ -95,11 +101,11 @@ class FollowTests(TestCase):
         )
 
         post_from_context = self.authorized_client.get(
-            reverse('posts:follow_index')).context['page_obj'][0]
+            self.reverse_follow_index).context['page_obj'][0]
 
         self.assertEqual(new_post, post_from_context)
 
         post_from_context = self.authorized_client2.get(
-            reverse('posts:follow_index')).context['page_obj'][0]
+            self.reverse_follow_index).context['page_obj'][0]
 
         self.assertNotEqual(new_post, post_from_context)

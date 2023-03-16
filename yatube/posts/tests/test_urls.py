@@ -33,6 +33,10 @@ class PostURLTests(TestCase):
         cls.POST_CREATE = '/create/'
         cls.UNEXISTING_PAGE = '/unexisting_page/'
         cls.FAKE_PAGE = '/fake/page'
+        cls.POST_COMMET = f'/posts/{cls.post.pk}/comment/'
+        cls.POST_FOLLOW = '/follow/'
+        cls.PROFILE_FOLLOW = f'/profile/{cls.user}/follow/'
+        cls.PROFILE_UNFOLLOW = f'/profile/{cls.user}/unfollow/'
 
         cls.FAKE = {
             cls.FAKE_PAGE: 'core/404.html',
@@ -48,6 +52,7 @@ class PostURLTests(TestCase):
         cls.AUTH_URLS = {
             cls.POST_EDIT: 'posts/post_create.html',
             cls.POST_CREATE: 'posts/post_create.html',
+            cls.POST_FOLLOW: 'posts/follow.html',
         }
 
         cls.REDIRECTION = '/auth/login/?next='
@@ -111,3 +116,16 @@ class PostURLTests(TestCase):
 
         response = self.guest_client.get(self.UNEXISTING_PAGE)
         self.assertEqual(response.status_code, 404)
+
+    def test_url_redirect(self):
+
+        url_names_redirects = {
+            self.PROFILE_FOLLOW: f'{self.REDIRECTION}{self.PROFILE_FOLLOW}',
+            self.PROFILE_UNFOLLOW:
+                f'{self.REDIRECTION}{self.PROFILE_UNFOLLOW}',
+        }
+
+        for address, redirect_address in url_names_redirects.items():
+            with self.subTest(address=address):
+                response = self.guest_client.get(address, follow=True)
+                self.assertRedirects(response, redirect_address)

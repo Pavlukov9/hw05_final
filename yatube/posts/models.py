@@ -12,6 +12,10 @@ class Group(models.Model):
                             verbose_name='Уникальный фрагмент URL-адреса')
     description = models.TextField(verbose_name='Описание')
 
+    class Meta:
+        verbose_name = 'Группа'
+        verbose_name_plural = 'Группы'
+
     def __str__(self):
         return self.title
 
@@ -37,7 +41,7 @@ class Post(models.Model):
         help_text='Группа, к которой будет относиться пост'
     )
     image = models.ImageField(
-        'Картинка',
+        verbose_name='Картинка',
         upload_to='posts/',
         blank=True
     )
@@ -73,6 +77,10 @@ class Comment(models.Model):
         verbose_name='Дата и время создания комментария'
     )
 
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
 
 class Follow(models.Model):
     user = models.ForeignKey(
@@ -88,3 +96,12 @@ class Follow(models.Model):
         related_name='following',
         verbose_name='Автор поста'
     )
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'], name='unique_follow'
+            )
+        ]

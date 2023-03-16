@@ -65,6 +65,17 @@ class PostTests(TestCase):
         cls.POST_EDIT_URL = reverse('posts:post_edit',
                                     kwargs={'post_id': cls.post.pk})
 
+        cls.POST_COMMET = reverse('posts:add_comment',
+                                  kwargs={'post_id': cls.post.pk})
+
+        cls.POST_FOLLOW = reverse('posts:follow_index')
+
+        cls.PROFILE_FOLLOW = reverse('posts:profile_follow',
+                                     kwargs={'username': cls.author})
+
+        cls.PROFILE_UNFOLLOW = reverse('posts:profile_unfollow',
+                                       kwargs={'username': cls.author})
+
         cls.names = (
             cls.INDEX_URL,
             cls.GROUP_LIST_URL,
@@ -93,6 +104,7 @@ class PostTests(TestCase):
             self.POST_DETAIL_URL: 'posts/post_detail.html',
             self.POST_EDIT_URL: 'posts/post_create.html',
             self.POST_CREATE_URL: 'posts/post_create.html',
+            self.POST_FOLLOW: 'posts/follow.html'
         }
 
         for reverse_name, template in (
